@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurora-Developer-16 | Developer Hub</title>
+  <style>
+    :root {
+      --bg-dark: #0b0e14;
+      --bg-card: #121722;
+      --bg-card-hover: #182030;
+      --text-main: #eef3ff;
+      --text-muted: #9aa6bf;
+      --border-subtle: rgba(148, 179, 255, 0.14);
+      --aurora-cyan: #2ef2d0;
+      --aurora-blue: #4ea8ff;
+      --aurora-violet: #b47cff;
+      --aurora-amber: #ffaa5c;
+      --grad-aurora: linear-gradient(120deg, var(--aurora-cyan), var(--aurora-blue), var(--aurora-violet), var(--aurora-amber));
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient aurora glow */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -180px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 920px;
+      height: 460px;
+      background: radial-gradient(circle at 25% 40%, rgba(46, 242, 208, 0.16), transparent 55%),
+                  radial-gradient(circle at 60% 35%, rgba(180, 124, 255, 0.16), transparent 55%),
+                  radial-gradient(circle at 80% 60%, rgba(255, 170, 92, 0.12), transparent 55%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 1.5rem 0 2.5rem;
+    }
+
+    .logo-wrap {
+      width: 112px;
+      height: 112px;
+      margin-bottom: 1.25rem;
+      filter: drop-shadow(0 10px 28px rgba(78, 168, 255, 0.25));
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--aurora-cyan);
+      background: rgba(46, 242, 208, 0.08);
+      border: 1px solid rgba(46, 242, 208, 0.25);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 0.85rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: var(--grad-aurora);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      max-width: 580px;
+      font-size: 1.02rem;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.35rem;
+      transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      background: var(--bg-card-hover);
+      border-color: rgba(78, 168, 255, 0.4);
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #cbd7f0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    /* Interactive 16-bit / Base Converter Widget */
+    .tool-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .tool-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin: 1rem 0 1.25rem;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      background: #0c1018;
+      border: 1px solid rgba(148, 179, 255, 0.22);
+      color: var(--text-main);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.95rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--aurora-cyan);
+    }
+
+    button {
+      background: var(--grad-aurora);
+      color: #090c12;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 0.58rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .readouts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .readout {
+      background: #0c1018;
+      border: 1px solid rgba(148, 179, 255, 0.12);
+      border-radius: 10px;
+      padding: 0.8rem 0.95rem;
+    }
+
+    .readout span {
+      display: block;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .readout code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.92rem;
+      color: var(--aurora-cyan);
+      word-break: break-all;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    footer a {
+      color: var(--aurora-blue);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-wrap" aria-hidden="true">
+        <!-- Scalable Aurora 'A' Emblem -->
+        <svg viewBox="0 0 120 120" width="112" height="112" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="auroraStroke" x1="12" y1="100" x2="108" y2="20" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#2ef2d0" />
+              <stop offset="40%" stop-color="#4ea8ff" />
+              <stop offset="75%" stop-color="#b47cff" />
+              <stop offset="100%" stop-color="#ffaa5c" />
+            </linearGradient>
+          </defs>
+          <path d="M22 92 A46 46 0 1 1 98 92" stroke="url(#auroraStroke)" stroke-width="5" stroke-linecap="round" opacity="0.85" />
+          <path d="M32 94 L60 26 L88 94" stroke="url(#auroraStroke)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M26 72 Q60 56 96 74" stroke="url(#auroraStroke)" stroke-width="6.5" stroke-linecap="round" />
+          <circle cx="60" cy="18" r="2.5" fill="#2ef2d0" />
+          <circle cx="84" cy="30" r="2" fill="#b47cff" />
+        </svg>
+      </div>
+      <div class="badge">Build &bull; Ship &bull; Iterate</div>
+      <h1>Aurora-Developer-16</h1>
+      <p class="subtitle">
+        Single-file developer hub for experiments, clean web utilities, and open-source tools—crafted with zero bloat and fast load times.
+      </p>
+    </header>
+
+    <h2 class="section-title">Featured Modules</h2>
+    <section class="grid" id="projects-grid">
+      <article class="card">
+        <h3>Aurora UI Kit</h3>
+        <p>Lightweight dark-mode CSS primitives with smooth aurora gradients and accessible contrast.</p>
+        <div class="tags">
+          <span class="tag">HTML5</span>
+          <span class="tag">CSS Variables</span>
+          <span class="tag">Zero-JS</span>
+        </div>
+      </article>
+      <article class="card">
+        <h3>16-Bit Register Inspector</h3>
+        <p>Instant decimal, hexadecimal, and 16-bit binary representation for low-level debugging.</p>
+        <div class="tags">
+          <span class="tag">Bitwise</span>
+          <span class="tag">Hex</span>
+          <span class="tag">Vanilla JS</span>
+        </div>
+      </article>
+      <article class="card">
+        <h3>Static Edge Starter</h3>
+        <p>Drop-in single-page template ready for GitHub Pages, Cloudflare Pages, or Vercel.</p>
+        <div class="tags">
+          <span class="tag">GitHub Pages</span>
+          <span class="tag">Responsive</span>
+        </div>
+      </article>
+    </section>
+
+    <h2 class="section-title">16-Bit Value Inspector</h2>
+    <section class="tool-panel">
+      <p style="color: var(--text-muted); font-size: 0.92rem;">
+        Enter any unsigned 16-bit integer (<strong>0 – 65535</strong>) to inspect its hex, octal, and 16-bit binary layout.
+      </p>
+      <div class="tool-controls">
+        <input id="dec-input" type="number" min="0" max="65535" value="4270" aria-label="Decimal value from 0 to 65535" />
+        <button id="random-btn" type="button">Random 16-Bit</button>
+      </div>
+      <div class="readouts">
+        <div class="readout">
+          <span>Hexadecimal</span>
+          <code id="out-hex">0x10AE</code>
+        </div>
+        <div class="readout">
+          <span>16-Bit Binary</span>
+          <code id="out-bin">0001 0000 1010 1110</code>
+        </div>
+        <div class="readout">
+          <span>High / Low Bytes</span>
+          <code id="out-bytes">0x10 / 0xAE</code>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Built for <strong>Aurora-Developer-16</strong> &middot; Hostable directly on
+      <a href="https://docs.github.com/en/pages" target="_blank" rel="noopener noreferrer">GitHub Pages</a>
+    </footer>
+  </div>
+
+  <script>
+    const decInput = document.getElementById("dec-input");
+    const randomBtn = document.getElementById("random-btn");
+    const outHex = document.getElementById("out-hex");
+    const outBin = document.getElementById("out-bin");
+    const outBytes = document.getElementById("out-bytes");
+
+    function updateInspector(rawVal) {
+      let num = parseInt(rawVal, 10);
+      if (Number.isNaN(num)) num = 0;
+      num = Math.max(0, Math.min(65535, num));
+      decInput.value = num;
+
+      const hex = num.toString(16).toUpperCase().padStart(4, "0");
+      const highByte = hex.slice(0, 2);
+      const lowByte = hex.slice(2, 4);
+
+      const bin16 = num.toString(2).padStart(16, "0");
+      const groupedBin = bin16.match(/.{1,4}/g).join(" ");
+
+      outHex.textContent = `0x${hex}`;
+      outBin.textContent = groupedBin;
+      outBytes.textContent = `0x${highByte} / 0x${lowByte}`;
+    }
+
+    decInput.addEventListener("input", (e) => updateInspector(e.target.value));
+    randomBtn.addEventListener("click", () => {
+      const rand = Math.floor(Math.random() * 65536);
+      updateInspector(rand);
+    });
+
+    updateInspector(decInput.value);
+  </script>
+</body>
+</html>
